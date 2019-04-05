@@ -114,9 +114,9 @@ public class Path {
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
         
-List<Arc> successors;
+        List<Arc> successors;
         
-        double minDist;
+        float minDist;
         int minDistIndex;
         
         /* On parcours les noeuds */
