@@ -1,5 +1,6 @@
 package org.insa.graph;
 
+import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -198,11 +199,31 @@ public class Path {
      * 
      * @return true if the path is valid, false otherwise.
      * 
-     * @deprecated Need to be implemented.
+     * deprecated Need to be implemented.
      */
     public boolean isValid() {
-        // TODO:
-        return false;
+    	
+    	Node previous = this.getOrigin();
+    	
+    	if (this.size() == 0 || this.size() == 1)
+    		return true;
+    	
+    	Arc current;
+    	Iterator<Arc> iter = this.arcs.iterator();
+    	
+    	while (iter.hasNext()) {
+    	
+    		current = iter.next();
+    		
+    		if (!(previous.equals(current.getOrigin())))
+    			return false;
+    		
+    		previous = current.getDestination();
+    	
+    	}
+
+    	
+        return true;
     }
 
     /**
@@ -210,11 +231,23 @@ public class Path {
      * 
      * @return Total length of the path (in meters).
      * 
-     * @deprecated Need to be implemented.
+     * deprecated Need to be implemented.
      */
     public float getLength() {
-        // TODO:
-        return 0;
+        
+    	float length = 0;
+    	
+    	Arc current;
+    	Iterator<Arc> iter = this.arcs.iterator();
+    	
+    	while (iter.hasNext()) {
+    	
+    		current = iter.next();
+    		length += current.getLength();
+    	
+    	}
+    	
+        return length;
     }
 
     /**
@@ -225,11 +258,11 @@ public class Path {
      * @return Time (in seconds) required to travel this path at the given speed (in
      *         kilometers-per-hour).
      * 
-     * @deprecated Need to be implemented.
+     * deprecated Need to be implemented.
      */
     public double getTravelTime(double speed) {
-        // TODO:
-        return 0;
+        
+        return this.getLength() / speed;
     }
 
     /**
@@ -238,11 +271,23 @@ public class Path {
      * 
      * @return Minimum travel time to travel this path (in seconds).
      * 
-     * @deprecated Need to be implemented.
+     * deprecated Need to be implemented.
      */
     public double getMinimumTravelTime() {
-        // TODO:
-        return 0;
+    	
+    	double tt = 0;
+    	
+    	Arc current;
+    	Iterator<Arc> iter = this.arcs.iterator();
+    	
+    	while (iter.hasNext()) {
+    	
+    		current = iter.next();
+    		tt += current.getMinimumTravelTime();
+    	
+    	}
+    	
+        return tt;
     }
 
 }
