@@ -31,12 +31,68 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
+     * 
      */
     public static Path createFastestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
+    	
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+
+        List<Arc> successors;
+        
+        double minTT;
+        int minTTIndex;
+        
+        /* On parcours les noeuds */
+        Iterator<Node> iterNode = nodes.iterator();
+        Node srcNode;
+        Node dstNode;
+        
+        if(nodes.isEmpty() || nodes.size() == 1)
+        	throw new IllegalArgumentException();
+        
+        /* On recupere le premier noeud */
+        if(iterNode.hasNext())
+        	srcNode = iterNode.next();
+        else
+        	throw new IllegalArgumentException();
+        
+        while(iterNode.hasNext()) {
+        	
+        	minTT = -1;
+        	minTTIndex = -1;
+        	
+        	dstNode = iterNode.next();
+        	
+        	if(srcNode.hasSuccessors()) {
+        		/* On parcours les successeurs de chaque noeud */
+        		successors = srcNode.getSuccessors();
+        		
+        		
+        		for(int i = 0; i < successors.size(); i++) {
+        			
+        			/* Si le noeud de destination de l'arc actuel est bien le prochain noeud, alors on compare sa TravelTime */
+        			if(successors.get(i).getDestination().equals(dstNode)) {
+        				
+        				/* Si la TT minimale n'est pas encore definie our si elle est plus petite que l'actuelle */
+        				if(minTT == -1 || successors.get(i).getMinimumTravelTime() < minTT) {
+        					minTT = successors.get(i).getMinimumTravelTime();
+        					minTTIndex = i;
+        				}
+        			}
+        			
+        		}
+        		
+        		arcs.add(successors.get(minTTIndex));
+        		
+        	}
+        	else
+        		throw new IllegalArgumentException();
+        	
+        	srcNode = dstNode;
+        	
+        }
+        
         return new Path(graph, arcs);
     }
 
@@ -52,12 +108,67 @@ public class Path {
      * @throws IllegalArgumentException If the list of nodes is not valid, i.e. two
      *         consecutive nodes in the list are not connected in the graph.
      * 
-     * @deprecated Need to be implemented.
+     * 
      */
     public static Path createShortestPathFromNodes(Graph graph, List<Node> nodes)
             throws IllegalArgumentException {
         List<Arc> arcs = new ArrayList<Arc>();
-        // TODO:
+        
+List<Arc> successors;
+        
+        double minDist;
+        int minDistIndex;
+        
+        /* On parcours les noeuds */
+        Iterator<Node> iterNode = nodes.iterator();
+        Node srcNode;
+        Node dstNode;
+        
+        if(nodes.isEmpty() || nodes.size() == 1)
+        	throw new IllegalArgumentException();
+        
+        /* On recupere le premier noeud */
+        if(iterNode.hasNext())
+        	srcNode = iterNode.next();
+        else
+        	throw new IllegalArgumentException();
+        
+        while(iterNode.hasNext()) {
+        	
+        	minDist = -1;
+        	minDistIndex = -1;
+        	
+        	dstNode = iterNode.next();
+        	
+        	if(srcNode.hasSuccessors()) {
+        		/* On parcours les successeurs de chaque noeud */
+        		successors = srcNode.getSuccessors();
+        		
+        		
+        		for(int i = 0; i < successors.size(); i++) {
+        			
+        			/* Si le noeud de destination de l'arc actuel est bien le prochain noeud, alors on compare sa TravelTime */
+        			if(successors.get(i).getDestination().equals(dstNode)) {
+        				
+        				/* Si la TT minimale n'est pas encore definie our si elle est plus petite que l'actuelle */
+        				if(minDist == -1 || successors.get(i).getLength() < minDist) {
+        					minDist = successors.get(i).getLength();
+        					minDistIndex = i;
+        				}
+        			}
+        			
+        		}
+        		
+        		arcs.add(successors.get(minDistIndex));
+        		
+        	}
+        	else
+        		throw new IllegalArgumentException();
+        	
+        	srcNode = dstNode;
+        	
+        }
+        
         return new Path(graph, arcs);
     }
 
@@ -199,7 +310,7 @@ public class Path {
      * 
      * @return true if the path is valid, false otherwise.
      * 
-     * deprecated Need to be implemented.
+     * 
      */
     public boolean isValid() {
     	
@@ -231,7 +342,7 @@ public class Path {
      * 
      * @return Total length of the path (in meters).
      * 
-     * deprecated Need to be implemented.
+     * 
      */
     public float getLength() {
         
@@ -258,7 +369,7 @@ public class Path {
      * @return Time (in seconds) required to travel this path at the given speed (in
      *         kilometers-per-hour).
      * 
-     * deprecated Need to be implemented.
+     * 
      */
     public double getTravelTime(double speed) {
         
@@ -271,7 +382,7 @@ public class Path {
      * 
      * @return Minimum travel time to travel this path (in seconds).
      * 
-     * deprecated Need to be implemented.
+     * 
      */
     public double getMinimumTravelTime() {
     	
