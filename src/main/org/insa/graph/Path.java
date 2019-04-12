@@ -48,8 +48,12 @@ public class Path {
         Node srcNode;
         Node dstNode;
         
-        if(nodes.isEmpty() || nodes.size() == 1)
-        	throw new IllegalArgumentException();
+        if(nodes.isEmpty())
+        	return new Path(graph);
+        
+        if (nodes.size() == 1) {
+        	return new Path(graph, nodes.get(0));
+        }
         
         /* On recupere le premier noeud */
         if(iterNode.hasNext())
@@ -67,9 +71,9 @@ public class Path {
         	if(srcNode.hasSuccessors()) {
         		/* On parcours les successeurs de chaque noeud */
         		successors = srcNode.getSuccessors();
+        		int i;
         		
-        		
-        		for(int i = 0; i < successors.size(); i++) {
+        		for(i = 0; i < successors.size(); i++) {
         			
         			/* Si le noeud de destination de l'arc actuel est bien le prochain noeud, alors on compare sa TravelTime */
         			if(successors.get(i).getDestination().equals(dstNode)) {
@@ -82,6 +86,9 @@ public class Path {
         			}
         			
         		}
+        		
+        		if (minTTIndex == -1)
+        			throw new IllegalArgumentException();
         		
         		arcs.add(successors.get(minTTIndex));
         		
@@ -124,8 +131,12 @@ public class Path {
         Node srcNode;
         Node dstNode;
         
-        if(nodes.isEmpty() || nodes.size() == 1)
-        	throw new IllegalArgumentException();
+        if(nodes.isEmpty())
+        	return new Path(graph);
+        
+        if (nodes.size() == 1) {
+        	return new Path(graph, nodes.get(0));
+        }
         
         /* On recupere le premier noeud */
         if(iterNode.hasNext())
@@ -144,8 +155,9 @@ public class Path {
         		/* On parcours les successeurs de chaque noeud */
         		successors = srcNode.getSuccessors();
         		
+        		int i;
         		
-        		for(int i = 0; i < successors.size(); i++) {
+        		for(i = 0; i < successors.size(); i++) {
         			
         			/* Si le noeud de destination de l'arc actuel est bien le prochain noeud, alors on compare sa TravelTime */
         			if(successors.get(i).getDestination().equals(dstNode)) {
@@ -158,6 +170,9 @@ public class Path {
         			}
         			
         		}
+        		
+        		if (minDistIndex == -1)
+        			throw new IllegalArgumentException();
         		
         		arcs.add(successors.get(minDistIndex));
         		
@@ -372,8 +387,20 @@ public class Path {
      * 
      */
     public double getTravelTime(double speed) {
+    	
+    	float time = 0;
+    	
+    	Arc current;
+    	Iterator<Arc> iter = this.arcs.iterator();
+    	
+    	while (iter.hasNext()) {
+    	
+    		current = iter.next();
+    		time += current.getTravelTime(speed);
+    	
+    	}
         
-        return this.getLength() / speed;
+        return time;
     }
 
     /**
