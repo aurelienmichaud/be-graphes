@@ -1,6 +1,6 @@
 package org.insa.graph;
 
-public class Label {
+public class Label implements Comparable<Label> {
 	
 	private Node current_node;
 	
@@ -10,13 +10,25 @@ public class Label {
 	
 	private Arc fatherArc;
 	
+	public Label() {
+		
+		this.current_node = null;
+		
+		this.marked = false;
+		
+		this.cost = -1;
+		
+		this.fatherArc = null;
+		
+	}
+	
 	public Label(Node current_node) {
 		
 		this.current_node = current_node;
 		
 		this.marked = false;
 		
-		this.cost = 0.0;
+		this.cost = -1;
 		
 		this.fatherArc = null;
 		
@@ -35,8 +47,16 @@ public class Label {
 		
 	}
 	
+	public Node getNode() {
+		return this.current_node;
+	}
+	
 	public double getCost() {
 		return this.cost;
+	}
+	
+	public void setCost(double cost) {
+		this.cost = cost;
 	}
 	
 	public boolean isMarked() {
@@ -57,6 +77,16 @@ public class Label {
 	
 	public void setFatherArc(Arc Father) {
 		this.fatherArc = Father;
+	}
+	
+	public boolean equals(Label other) {
+		if (this.current_node.equals(other.current_node))
+			return true;
+		return false;
+	}
+	
+	public int compareTo(Label other) {
+		return (int) this.getCost() - (int) other.getCost();
 	}
 
 }
