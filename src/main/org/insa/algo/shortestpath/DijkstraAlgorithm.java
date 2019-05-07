@@ -13,6 +13,8 @@ import org.insa.graph.Graph;
 import org.insa.graph.Label;
 import org.insa.graph.Node;
 import org.insa.graph.Path;
+import org.insa.graph.RoadInformation;
+import org.insa.graph.AccessRestrictions;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	
@@ -20,6 +22,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	
 	Node origin;
 	Node destination;
+	
 	
 	BinaryHeap<Label> bh;
 	
@@ -66,12 +69,20 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	if (currentLabel.getNode().hasSuccessors()) {
         	
 	        	for (Arc successorArc: currentLabel.getNode().getSuccessors()) {
-
+	        		
 	        		successorLabel = labels.get(successorArc.getDestination().getId());
 	        		
 	        		if (! successorLabel.isMarked()) {
 	        			
-	        			if(successorLabel.getCost() == -1 || successorLabel.getCost() > (currentLabel.getCost() + successorArc.getLength())) {
+		        		
+		        		if (!(data.isAllowed(successorArc))) {
+		        			
+		        			System.out.println("yessss");
+		        			continue;
+		        			
+		        		}
+	        			
+		        		else if(successorLabel.getCost() == -1 || successorLabel.getCost() > (currentLabel.getCost() + successorArc.getLength())) {
 	        				
 	        				successorLabel.setCost(currentLabel.getCost() + successorArc.getLength());
 	        				
@@ -93,20 +104,26 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         solutionArcs = new ArrayList<Arc>();
         
-        while (!(destination.getNode().equals(this.origin))) {
+        
+        if (destination.getFatherArc() == null) {
         	
-        	System.out.println("oui");
+        	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
         	
-        	solutionArcs.add(destination.getFatherArc());
-        	destination = labels.get(destination.getFather().getId());
-        	
+        } else {
+        
+	        while (!(destination.getNode().equals(this.origin))) {
+	        	
+	        	solutionArcs.add(destination.getFatherArc());
+	        	destination = labels.get(destination.getFather().getId());
+	        	
+	        }
+	        
+	        Collections.reverse(solutionArcs);
+	        solutionPath = new Path(g, solutionArcs);
+	        
+	        solution = new ShortestPathSolution(data, Status.OPTIMAL, solutionPath);
+        
         }
-        
-        Collections.reverse(solutionArcs);
-        solutionPath = new Path(g, solutionArcs);
-        
-        solution = new ShortestPathSolution(data, Status.OPTIMAL, solutionPath);
-        
         
         return solution;
     }
