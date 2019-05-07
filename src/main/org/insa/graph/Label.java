@@ -16,7 +16,7 @@ public class Label implements Comparable<Label> {
 		
 		this.marked = false;
 		
-		this.cost = -1;
+		this.cost = Double.POSITIVE_INFINITY;
 		
 		this.fatherArc = null;
 		
@@ -28,7 +28,7 @@ public class Label implements Comparable<Label> {
 		
 		this.marked = false;
 		
-		this.cost = -1;
+		this.cost = Double.POSITIVE_INFINITY;
 		
 		this.fatherArc = null;
 		

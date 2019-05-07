@@ -13,8 +13,7 @@ import org.insa.graph.Graph;
 import org.insa.graph.Label;
 import org.insa.graph.Node;
 import org.insa.graph.Path;
-import org.insa.graph.RoadInformation;
-import org.insa.graph.AccessRestrictions;
+
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	
@@ -82,9 +81,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 		        			
 		        		}
 	        			
-		        		else if(successorLabel.getCost() == -1 || successorLabel.getCost() > (currentLabel.getCost() + successorArc.getLength())) {
+		        		else if(successorLabel.getCost() == -1 || successorLabel.getCost() > (currentLabel.getCost() + data.getCost(successorArc))) {
 	        				
-	        				successorLabel.setCost(currentLabel.getCost() + successorArc.getLength());
+	        				successorLabel.setCost(currentLabel.getCost() + data.getCost(successorArc));
 	        				
 	        				successorLabel.setFatherArc(successorArc);
 	        				
@@ -96,8 +95,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        	}
         	}
         	
-        	bh.remove(currentLabel);
+        	notifyNodeReached(currentLabel.getNode());
         	
+        	bh.remove(currentLabel);
         }
         
         destination = labels.get(this.destination.getId());
@@ -127,5 +127,4 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         return solution;
     }
-
 }
