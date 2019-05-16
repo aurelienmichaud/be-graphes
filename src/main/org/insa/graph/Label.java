@@ -86,7 +86,12 @@ public class Label implements Comparable<Label> {
 	}
 	
 	public int compareTo(Label other) {
-		return (int) this.getCost() - (int) other.getCost();
+		if (this.getCost() - other.getCost() > 0.0)
+			return 1;
+		else if (this.getCost() - other.getCost() < 0.0)
+			return -1;
+		else
+			return 0;
 	}
 
 }

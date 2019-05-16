@@ -17,15 +17,15 @@ import org.insa.graph.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	
-	Graph g;
+	private Graph g;
 	
-	Node origin;
-	Node destination;
+	private Node origin;
+	private Node destination;
 	
 	
-	BinaryHeap<Label> bh;
+	private BinaryHeap<Label> bh;
 	
-	ArrayList<Label> labels;
+	private ArrayList<Label> labels;
 
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
@@ -47,7 +47,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     }
 
     @Override
-    protected ShortestPathSolution doRun() {
+    public ShortestPathSolution doRun() {
         ShortestPathData data = getInputData();
         ShortestPathSolution solution = null;
         
@@ -58,6 +58,18 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         Label currentLabel;
         Label successorLabel;
+        
+        if (this.destination.equals(this.origin)) {
+        	
+        	solutionArcs = new ArrayList<Arc>();
+        	
+        	solutionPath = new Path(g, solutionArcs);
+	        
+	        solution = new ShortestPathSolution(data, Status.OPTIMAL, solutionPath);
+	        
+	        return solution;
+        	
+        }
 
         while (!bh.isEmpty()) {
         	
@@ -84,8 +96,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        				successorLabel.setFatherArc(successorArc);
 
 	        				bh.insert(successorLabel);
-	        				
-	        				System.out.println(bh.isValide(0));
 	        			}
 	        		}
 	        	}

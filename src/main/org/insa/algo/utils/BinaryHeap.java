@@ -225,27 +225,29 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     }
     
     public boolean isValide(int index) {
+    	
+    	int ileft = this.index_left(index);
+    	int iright = ileft + 1;
     
     	if (index < this.size()) {
     		
-    		if (this.index_left(index) < this.size() && this.index_left(index) + 1 < this.size()) {
-    			
-	    		if (this.array.get(this.index_left(index)).compareTo(this.array.get(index)) > 0 &&
-	    			this.array.get(this.index_left(index) + 1).compareTo(this.array.get(index)) > 0) {
+    		if (ileft < this.size() && iright < this.size()) {
 	
-	    			return isValide(this.index_left(index)) && isValide(this.index_left(index) + 1);
-	    		}
-	    		else {
-	    			return false;
-	    		}
+	    			return  this.array.get(ileft).compareTo(this.array.get(index)) > 0 &&
+	    					this.array.get(iright).compareTo(this.array.get(index)) > 0 &&
+	    					isValide(ileft) &&
+	    					isValide(iright);
+
     		}
-    		else if (this.index_left(index) < this.size()) {
-    			return this.array.get(this.index_left(index)).compareTo(this.array.get(index)) > 0 && 
-    					isValide(this.index_left(index));
+    		else if (ileft < this.size()) {
+    			
+    			return this.array.get(ileft).compareTo(this.array.get(index)) > 0 && 
+    					isValide(ileft);
     		}
-    		else if (this.index_left(index) + 1 < this.size()) {
-    			return this.array.get(this.index_left(index) + 1).compareTo(this.array.get(index)) > 0 && 
-    					isValide(this.index_left(index) + 1);
+    		else if (iright < this.size()) {
+    			
+    			return this.array.get(iright).compareTo(this.array.get(index)) > 0 && 
+    					isValide(iright);
     		}
     		else
     			return true;
