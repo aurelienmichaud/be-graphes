@@ -223,5 +223,34 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
         System.out.println("--------  End of heap  --------");
         System.out.println();
     }
-
+    
+    public boolean isValide(int index) {
+    
+    	if (index < this.size()) {
+    		
+    		if (this.index_left(index) < this.size() && this.index_left(index) + 1 < this.size()) {
+    			
+	    		if (this.array.get(this.index_left(index)).compareTo(this.array.get(index)) > 0 &&
+	    			this.array.get(this.index_left(index) + 1).compareTo(this.array.get(index)) > 0) {
+	
+	    			return isValide(this.index_left(index)) && isValide(this.index_left(index) + 1);
+	    		}
+	    		else {
+	    			return false;
+	    		}
+    		}
+    		else if (this.index_left(index) < this.size()) {
+    			return this.array.get(this.index_left(index)).compareTo(this.array.get(index)) > 0 && 
+    					isValide(this.index_left(index));
+    		}
+    		else if (this.index_left(index) + 1 < this.size()) {
+    			return this.array.get(this.index_left(index) + 1).compareTo(this.array.get(index)) > 0 && 
+    					isValide(this.index_left(index) + 1);
+    		}
+    		else
+    			return true;
+    	}
+    	else
+    		return true;
+    }
 }

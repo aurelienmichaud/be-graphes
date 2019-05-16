@@ -58,7 +58,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         Label currentLabel;
         Label successorLabel;
-        
+
         while (!bh.isEmpty()) {
         	
         	currentLabel = bh.findMin();
@@ -74,24 +74,20 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        		if (! successorLabel.isMarked()) {
 	        			
 		        		
-		        		if (!(data.isAllowed(successorArc))) {
-		        			
-		        			System.out.println("yessss");
+		        		if (!(data.isAllowed(successorArc))) {	
 		        			continue;
-		        			
 		        		}
-	        			
 		        		else if(successorLabel.getCost() == -1 || successorLabel.getCost() > (currentLabel.getCost() + data.getCost(successorArc))) {
 	        				
 	        				successorLabel.setCost(currentLabel.getCost() + data.getCost(successorArc));
 	        				
 	        				successorLabel.setFatherArc(successorArc);
-	        				
+
 	        				bh.insert(successorLabel);
 	        				
+	        				System.out.println(bh.isValide(0));
 	        			}
 	        		}
-	        		
 	        	}
         	}
         	
