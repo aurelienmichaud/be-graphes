@@ -6,6 +6,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -15,6 +19,14 @@ import org.insa.algo.ArcInspectorFactory;
 import org.insa.graph.*;
 import org.insa.graph.RoadInformation.RoadType;
 import org.insa.algo.shortestpath.*;
+
+import org.insa.graph.Graph;
+import org.insa.graph.Path;
+import org.insa.graph.io.BinaryGraphReader;
+import org.insa.graph.io.BinaryPathReader;
+import org.insa.graph.io.GraphReader;
+import org.insa.graph.io.PathReader;
+
 
 public class DijkstraTest {
 	
@@ -69,9 +81,10 @@ public class DijkstraTest {
 		AI0 = ArcInspectorFactory.getAllFilters().get(0);
 		AI3 = ArcInspectorFactory.getAllFilters().get(3);
 		
-		// Nothing
-		// Nothing
-		// Nothing
+		// Previous tests to know how Dijkstra should behave
+		//bNullGraph           = new BellmanFordAlgorithm(new ShortestPathData(nullGraph, null, null, AI0));
+		//bEmptyGraph          = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, null, null, AI0));
+		//bEmptyGraphButNodes  = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, nodes[0], nodes[0], AI0));
 		bSingleNodeGraph     = new BellmanFordAlgorithm(new ShortestPathData(singleNodeGraph, nodes[0], nodes[0], AI0));
 		bStartEqualsEndGraph = new BellmanFordAlgorithm(new ShortestPathData(startEqualsEndGraph, nodes[0], nodes[0], AI0));
 		
@@ -100,5 +113,25 @@ public class DijkstraTest {
 	@Test(expected = ArrayIndexOutOfBoundsException.class)
 	public void testSingleNodeGraph() {
 		bSingleNodeGraph.doRun();
+	}
+
+	@Test
+	public void testStartEqualsEndGraph() {
+		bStartEqualsEndGraph.doRun();
+		//dStartEqualsEndGraph.doRun();
+		//assertEquals(dStartEqualsEndGraph.doRun(), bStartEqualsEndGraph.doRun());
+	}	
+
+	@Test
+	public void testRandomCarreMap() {
+		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre.mapgr";
+	
+		GraphReader reader = new BinaryGraphReader(
+				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
+
+		Graph g = reader.read();
+
+		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(startEqualsEndGraph, nodes[0], nodes[0], AI0));
+		DijkstraAlgorithm d = new DijkstraAlgorithm(new ShortestPathData(startEqualsEndGraph, nodes[0], nodes[0], AI0));
 	}
 }
