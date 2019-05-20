@@ -220,7 +220,7 @@ public class DijkstraTest {
 	}
 	
 	@Test
-	public void testRandomCarreMapA3() throws IOException {
+	public void testRandomCarreMapA2() throws IOException {
 		// Fetch the map
 		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre.mapgr";
 	
@@ -322,7 +322,7 @@ public class DijkstraTest {
 	}
 	
 	@Test
-	public void testRandomInsaMapA3() throws IOException {
+	public void testRandomInsaMapA2() throws IOException {
 		// Fetch the map
 		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/insa.mapgr";
 	
@@ -432,7 +432,7 @@ public class DijkstraTest {
 	}
 	
 	@Test
-	public void testRandomToulouseMapA3() throws IOException {
+	public void testRandomToulouseMapA2() throws IOException {
 		// Fetch the map
 		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/toulouse.mapgr";
 	
