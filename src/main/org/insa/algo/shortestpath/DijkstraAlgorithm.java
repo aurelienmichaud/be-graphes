@@ -47,7 +47,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     }
 
     @Override
-    public ShortestPathSolution doRun() {
+    public ShortestPathSolution doRun() throws ArrayIndexOutOfBoundsException, NullPointerException {
         ShortestPathData data = getInputData();
         ShortestPathSolution solution = null;
         
@@ -58,6 +58,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         Label currentLabel;
         Label successorLabel;
+        
+        if (this.origin == null || this.destination == null)
+        	throw new NullPointerException();
+        
+        if (this.g.size() <= 0)
+        	throw new ArrayIndexOutOfBoundsException();
         
         if (this.destination.equals(this.origin)) {
         	

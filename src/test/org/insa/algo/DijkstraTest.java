@@ -2,7 +2,9 @@ package org.insa.algo;
 
 import static org.junit.Assert.*;
 
+import java.util.Iterator;
 import java.io.IOException;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -10,9 +12,8 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 
-import java.util.Random.nextInt;
-import Math.random;
-import java.util.Random.ints;
+import java.util.Random;
+import java.util.Random.*;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,7 +47,7 @@ public class DijkstraTest {
 	private static ArcInspector AI0;
 	private static ArcInspector AI3;
 	
-	private static BellmanFordAlgorithm bEmptyGraph, bSingleNodeGraph, bLoopGraph, bStartEqualsEndGraph;
+	private static BellmanFordAlgorithm bEmptyGraph, bEmptyGraphButNodes, bSingleNodeGraph, bLoopGraph, bStartEqualsEndGraph;
 	
 	private static ShortestPathSolution sps;
 	
@@ -88,7 +89,7 @@ public class DijkstraTest {
 		// Previous tests to know how Dijkstra should behave
 		//bNullGraph           = new BellmanFordAlgorithm(new ShortestPathData(nullGraph, null, null, AI0));
 		//bEmptyGraph          = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, null, null, AI0));
-		//bEmptyGraphButNodes  = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, nodes[0], nodes[0], AI0));
+		bEmptyGraphButNodes  = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, nodes[0], nodes[0], AI0));
 		bSingleNodeGraph     = new BellmanFordAlgorithm(new ShortestPathData(singleNodeGraph, nodes[0], nodes[0], AI0));
 		bStartEqualsEndGraph = new BellmanFordAlgorithm(new ShortestPathData(startEqualsEndGraph, nodes[0], nodes[0], AI0));
 		
@@ -127,25 +128,135 @@ public class DijkstraTest {
 	}	
 
 	@Test
-	public void testRandomCarreMap() {
+	public void testRandomCarreMap() throws IOException {
 		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre.mapgr";
 	
 		GraphReader reader = new BinaryGraphReader(
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
 
 		Graph g = reader.read();
-		List<Node> l = g.get();
 
 		Random r = new Random();
 
-		r.nextInt(l.size());
-		Node origin      = l.get(r);
-		r.nextInt(l.size());
-		Node destination = l.get(r);
+		Node origin      = g.get(r.nextInt(g.size()));
+		Node destination = g.get(r.nextInt(g.size()));
 
-		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(startEqualsEndGraph, nodes[0], nodes[0], AI0));
-		DijkstraAlgorithm d = new DijkstraAlgorithm(new ShortestPathData(startEqualsEndGraph, nodes[0], nodes[0], AI0));
+		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(g, origin, destination, AI0));
+		DijkstraAlgorithm d    = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI0));
+		
+		Path dp, bp;
+		
+		bp = b.doRun().getPath();
+		dp = d.doRun().getPath();
+		
+		// Test if the arcs are the same
+		Iterator<Arc> ba = bp.getArcs().iterator();
+		Iterator<Arc> da = dp.getArcs().iterator();
+		
+		while (ba.hasNext() && da.hasNext()) {
+			if(ba.next().getOrigin().equals(da.next().getDestination()))
+				fail();
+		}
+		
+		// One has more arcs than the other one
+		if (ba.hasNext() || da.hasNext())
+			fail();
+		
+		return;
 
-		assertEquals(d.doRun(), b.doRun());
+	}
+	
+	@Test
+	public void testRandomInsaMap() throws IOException {
+		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/insa.mapgr";
+	
+		GraphReader reader = new BinaryGraphReader(
+				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
+
+		Graph g = reader.read();
+
+		Random r = new Random();
+		int r1 = 0;
+		int r2 = r1;
+		
+		while (r1 == r2) {
+			r1 = r.nextInt(g.size());
+			r2 = r.nextInt(g.size());
+		}
+
+		Node origin      = g.get(r1);
+		Node destination = g.get(r2);
+
+		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(g, origin, destination, AI0));
+		DijkstraAlgorithm d    = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI0));
+		
+		Path dp, bp;
+		
+		bp = b.doRun().getPath();
+		dp = d.doRun().getPath();
+		
+		// Test if the arcs are the same
+		Iterator<Arc> ba = bp.getArcs().iterator();
+		Iterator<Arc> da = dp.getArcs().iterator();
+		
+		while (ba.hasNext() && da.hasNext()) {
+			if(ba.next().getOrigin().equals(da.next().getDestination()))
+				fail();
+		}
+		
+		// One has more arcs than the other one
+		if (ba.hasNext() || da.hasNext())
+			fail();
+		
+		return;
+
+	}
+	
+	@Test
+	public void testRandomCarreDenseMap() throws IOException {
+		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre-dense.mapgr";
+	
+		GraphReader reader = new BinaryGraphReader(
+				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
+
+		Graph g = reader.read();
+
+		Random r = new Random();
+		int r1 = 0;
+		int r2 = r1;
+		
+		while (r1 == r2) {
+			r1 = r.nextInt(g.size());
+			r2 = r.nextInt(g.size());
+		}
+
+		Node origin      = g.get(r1);
+		Node destination = g.get(r2);
+
+		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(g, origin, destination, AI0));
+		DijkstraAlgorithm d    = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI0));
+		
+		Path dp, bp;
+		
+		bp = b.doRun().getPath();
+		System.out.println("Bellman Ford just finished !");
+		dp = d.doRun().getPath();
+		System.out.println("Dijkstra just finished !");
+		
+		// Test if the arcs are the same
+		Iterator<Arc> ba = bp.getArcs().iterator();
+		Iterator<Arc> da = dp.getArcs().iterator();
+		
+		while (ba.hasNext() && da.hasNext()) {
+			if(ba.next().getOrigin().equals(da.next().getDestination()))
+				fail();
+		}
+		
+		// One has more arcs than the other one
+		if (ba.hasNext() || da.hasNext())
+			fail();
+		
+		return;
+
 	}
 }
