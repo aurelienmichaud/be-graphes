@@ -80,7 +80,7 @@ public class Label implements Comparable<Label> {
 	}
 	
 	public double getTotalCost() {
-		return this.cost;
+		return this.getCost();
 	}
 	
 	public boolean equals(Label other) {
@@ -90,6 +90,7 @@ public class Label implements Comparable<Label> {
 	}
 	
 	public int compareTo(Label other) {
+		// Since if the subtraction is between 0 and 1, returning a int will return 0
 		if (this.getTotalCost() - other.getTotalCost() > 0.0)
 			return 1;
 		else if (this.getTotalCost() - other.getTotalCost() < 0.0)

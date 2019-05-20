@@ -15,55 +15,40 @@ import org.insa.graph.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	
-	private Graph g;
-	
-	private Node origin;
-	private Node destination;
-	
-	
-	private BinaryHeap<Label> bh;
-	
-	private ArrayList<Label> labels;
-
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
-        
-        this.g = data.getGraph();
-        
-        this.origin = data.getOrigin();
-        this.destination = data.getDestination();
-        
-        bh = new BinaryHeap<Label>();
-        bh.insert(new Label(this.origin, 0.0));
-        
-        labels = new ArrayList<Label>();
-        
-        for (int i = 0; i < g.size(); i++) {
-        	labels.add(new Label(g.get(i)));
-        }
-        
     }
 
     @Override
     public ShortestPathSolution doRun() throws ArrayIndexOutOfBoundsException, NullPointerException {
-        ShortestPathData data = getInputData();
+    	
+    	ShortestPathData data = getInputData();
+    	
+    	Graph g = data.getGraph();
+    	
+    	Node origin      = data.getOrigin();
+    	Node destination = data.getDestination();
+    	
+    	BinaryHeap<Label> bh = new BinaryHeap<Label>();
+    	ArrayList<Label> labels = new ArrayList<Label>();
+    	
         ShortestPathSolution solution = null;
         
         Path solutionPath;
         ArrayList<Arc> solutionArcs;
         
-        Label destination;
+        Label destinationL;
         
         Label currentLabel;
         Label successorLabel;
         
-        if (this.origin == null || this.destination == null)
+        if (origin == null || destination == null)
         	throw new NullPointerException();
         
-        if (this.g.size() <= 0)
+        if (g.size() <= 0)
         	throw new ArrayIndexOutOfBoundsException();
         
-        if (this.g.size() == 1 || this.origin.equals(this.destination)) {
+        if (g.size() == 1 || origin.equals(destination)) {
         	
         	solutionArcs = null;
         	
@@ -74,7 +59,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        return solution;
         }
         
-        if (this.destination.equals(this.origin)) {
+        if (destination.equals(origin)) {
         	
         	solutionArcs = new ArrayList<Arc>();
         	
@@ -84,6 +69,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        
 	        return solution;
         	
+        }
+        
+        bh.insert(new Label(origin, 0.0));
+        
+        for (int i = 0; i < g.size(); i++) {
+        	labels.add(new Label(g.get(i)));
         }
 
         while (!bh.isEmpty()) {
@@ -99,14 +90,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	        		successorLabel = labels.get(successorArc.getDestination().getId());
 	        		
 	        		if (! successorLabel.isMarked()) {
-	        			
 		        		
 		        		if (!(data.isAllowed(successorArc))) {	
 		        			continue;
 		        		}
-		        		else if(successorLabel.getCost() == -1 || successorLabel.getCost() > (currentLabel.getCost() + data.getCost(successorArc))) {
+		        		else if (successorLabel.getTotalCost() == -1 || successorLabel.getTotalCost() > (currentLabel.getTotalCost() + data.getCost(successorArc))) {
 	        				
-	        				successorLabel.setCost(currentLabel.getCost() + data.getCost(successorArc));
+	        				successorLabel.setCost(currentLabel.getTotalCost() + data.getCost(successorArc));
 	        				
 	        				successorLabel.setFatherArc(successorArc);
 
@@ -121,21 +111,21 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	bh.remove(currentLabel);
         }
         
-        destination = labels.get(this.destination.getId());
+        destinationL = labels.get(destination.getId());
         
         solutionArcs = new ArrayList<Arc>();
         
         
-        if (destination.getFatherArc() == null) {
+        if (destinationL.getFatherArc() == null) {
         	
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
         	
         } else {
         
-	        while (!(destination.getNode().equals(this.origin))) {
+	        while (!(destinationL.getNode().equals(origin))) {
 	        	
-	        	solutionArcs.add(destination.getFatherArc());
-	        	destination = labels.get(destination.getFather().getId());
+	        	solutionArcs.add(destinationL.getFatherArc());
+	        	destinationL = labels.get(destinationL.getFather().getId());
 	        	
 	        }
 	        
