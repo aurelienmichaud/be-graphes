@@ -10,6 +10,10 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 
+import java.util.Random.nextInt;
+import Math.random;
+import java.util.Random.ints;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -130,8 +134,18 @@ public class DijkstraTest {
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
 
 		Graph g = reader.read();
+		List<Node> l = g.get();
+
+		Random r = new Random();
+
+		r.nextInt(l.size());
+		Node origin      = l.get(r);
+		r.nextInt(l.size());
+		Node destination = l.get(r);
 
 		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(startEqualsEndGraph, nodes[0], nodes[0], AI0));
 		DijkstraAlgorithm d = new DijkstraAlgorithm(new ShortestPathData(startEqualsEndGraph, nodes[0], nodes[0], AI0));
+
+		assertEquals(d.doRun(), b.doRun());
 	}
 }
