@@ -45,7 +45,7 @@ public class DijkstraTest {
     private static Arc a2b, a2c, a2e, b2c, c2d_1, c2d_2, c2d_3, c2a, d2a, d2e, e2d;
 	
 	private static ArcInspector AI0;
-	private static ArcInspector AI3;
+	private static ArcInspector AI2;
 	
 	private static BellmanFordAlgorithm bEmptyGraph, bEmptyGraphButNodes, bSingleNodeGraph, bLoopGraph, bStartEqualsEndGraph;
 	
@@ -65,6 +65,10 @@ public class DijkstraTest {
 		for (int i = 0; i < nodes.length; ++i) {
 			nodes[i] = new Node(i, null);
 		}
+		
+		Node n0 = new Node(0, null);
+		
+		Node.linkNodes(n0, n0, 0, speed10, null);
 
 		// Add arcs...
 		a2b   = Node.linkNodes(nodes[0], nodes[1], 10, speed10, null);
@@ -80,24 +84,24 @@ public class DijkstraTest {
 
 		nullGraph           = new Graph(null, null, new ArrayList<Node>(), null);
 		emptyGraph          = new Graph("ID", "", new ArrayList<Node>(), null);
-		singleNodeGraph     = new Graph("ID", "", Arrays.asList(new Node[] { nodes[0] }), null);
+		singleNodeGraph     = new Graph("ID", "", Arrays.asList(new Node[] { n0 }), null);
 		startEqualsEndGraph = new Graph("ID", "", Arrays.asList(nodes), null);
 
 		AI0 = ArcInspectorFactory.getAllFilters().get(0);
-		AI3 = ArcInspectorFactory.getAllFilters().get(3);
+		AI2 = ArcInspectorFactory.getAllFilters().get(3);
 		
 		// Previous tests to know how Dijkstra should behave
 		//bNullGraph           = new BellmanFordAlgorithm(new ShortestPathData(nullGraph, null, null, AI0));
 		//bEmptyGraph          = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, null, null, AI0));
-		bEmptyGraphButNodes  = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, nodes[0], nodes[0], AI0));
-		bSingleNodeGraph     = new BellmanFordAlgorithm(new ShortestPathData(singleNodeGraph, nodes[0], nodes[0], AI0));
-		bStartEqualsEndGraph = new BellmanFordAlgorithm(new ShortestPathData(startEqualsEndGraph, nodes[0], nodes[0], AI0));
+		bEmptyGraphButNodes  = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, n0, n0, AI0));
+		bSingleNodeGraph     = new BellmanFordAlgorithm(new ShortestPathData(singleNodeGraph, n0, n0, AI0));
+		bStartEqualsEndGraph = new BellmanFordAlgorithm(new ShortestPathData(startEqualsEndGraph, n0, n0, AI0));
 		
 		dNullGraph           = new DijkstraAlgorithm(new ShortestPathData(nullGraph, null, null, AI0));
 		dEmptyGraph          = new DijkstraAlgorithm(new ShortestPathData(emptyGraph, null, null, AI0));
-		dEmptyGraphButNodes  = new DijkstraAlgorithm(new ShortestPathData(emptyGraph, nodes[0], nodes[0], AI0));
-		dSingleNodeGraph     = new DijkstraAlgorithm(new ShortestPathData(singleNodeGraph, nodes[0], nodes[0], AI0));
-		dStartEqualsEndGraph = new DijkstraAlgorithm(new ShortestPathData(startEqualsEndGraph, nodes[0], nodes[0], AI0));
+		dEmptyGraphButNodes  = new DijkstraAlgorithm(new ShortestPathData(emptyGraph, n0, n0, AI0));
+		dSingleNodeGraph     = new DijkstraAlgorithm(new ShortestPathData(singleNodeGraph, n0, n0, AI0));
+		dStartEqualsEndGraph = new DijkstraAlgorithm(new ShortestPathData(startEqualsEndGraph, n0, n0, AI0));
 	}
 
 	@Test(expected = NullPointerException.class)
@@ -115,25 +119,67 @@ public class DijkstraTest {
 		dEmptyGraphButNodes.doRun();
 	}
 	
-	@Test(expected = ArrayIndexOutOfBoundsException.class)
+	@Test//(expected = ArrayIndexOutOfBoundsException.class)
 	public void testSingleNodeGraph() {
-		bSingleNodeGraph.doRun();
+
+		Path dp, bp;
+		bp = bSingleNodeGraph.doRun().getPath();
+		dp = dSingleNodeGraph.doRun().getPath();
+
+		// bp == null && dp == null
+		if (bp != dp) 
+			fail();
+		else
+			return;
 	}
 
 	@Test
 	public void testStartEqualsEndGraph() {
-		bStartEqualsEndGraph.doRun();
-		//dStartEqualsEndGraph.doRun();
-		//assertEquals(dStartEqualsEndGraph.doRun(), bStartEqualsEndGraph.doRun());
+		dStartEqualsEndGraph.doRun();
+		Path dp, bp;
+		bp = bStartEqualsEndGraph.doRun().getPath();
+		dp = dStartEqualsEndGraph.doRun().getPath();
+		
+		if(bp == null)
+			System.out.println("bp == null");
+		if(dp == null)
+			System.out.println("dp == null");
+		
+		if (bp != null && dp != null) {
+			// Test if the arcs are the same
+			Iterator<Arc> ba = bp.getArcs().iterator();
+			Iterator<Arc> da = dp.getArcs().iterator();
+			
+			while (ba.hasNext() && da.hasNext()) {
+				Arc baa = ba.next();
+				Arc daa = da.next();
+				System.out.println("b = " + baa.getOrigin().getId());
+				System.out.println("d" + daa.getOrigin().getId());
+				if(baa.getOrigin().equals(daa.getDestination()))
+					fail();
+			}
+			
+			// One has more arcs than the other one
+			if (ba.hasNext() || da.hasNext())
+				fail();
+			
+			return;
+		}
+		// If the two path are null, it's still the same so it's great
+		else if (bp == null && dp == null)
+			return;
+		else
+			fail();
 	}	
 
 	@Test
-	public void testRandomCarreMap() throws IOException {
+	public void testRandomCarreMapA0() throws IOException {
+		// Fetch the map
 		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre.mapgr";
 	
 		GraphReader reader = new BinaryGraphReader(
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
-
+		// Get the graph from the map
 		Graph g = reader.read();
 
 		Random r = new Random();
@@ -149,30 +195,86 @@ public class DijkstraTest {
 		bp = b.doRun().getPath();
 		dp = d.doRun().getPath();
 		
-		// Test if the arcs are the same
-		Iterator<Arc> ba = bp.getArcs().iterator();
-		Iterator<Arc> da = dp.getArcs().iterator();
-		
-		while (ba.hasNext() && da.hasNext()) {
-			if(ba.next().getOrigin().equals(da.next().getDestination()))
+		if (bp != null && dp != null) {
+			// Test if the arcs are the same
+			Iterator<Arc> ba = bp.getArcs().iterator();
+			Iterator<Arc> da = dp.getArcs().iterator();
+			
+			while (ba.hasNext() && da.hasNext()) {
+				if(ba.next().getOrigin().equals(da.next().getDestination()))
+					fail();
+			}
+			
+			// One has more arcs than the other one
+			if (ba.hasNext() || da.hasNext())
 				fail();
+			
+			return;
 		}
-		
-		// One has more arcs than the other one
-		if (ba.hasNext() || da.hasNext())
+		// If the two path are null, it's still the same so it's great
+		else if (bp == null && dp == null)
+			return;
+		else
 			fail();
-		
-		return;
 
 	}
 	
 	@Test
-	public void testRandomInsaMap() throws IOException {
+	public void testRandomCarreMapA3() throws IOException {
+		// Fetch the map
+		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre.mapgr";
+	
+		GraphReader reader = new BinaryGraphReader(
+				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
+		// Get the graph from the map
+		Graph g = reader.read();
+
+		Random r = new Random();
+
+		Node origin      = g.get(r.nextInt(g.size()));
+		Node destination = g.get(r.nextInt(g.size()));
+
+		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(g, origin, destination, AI2));
+		DijkstraAlgorithm d    = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI2));
+		
+		Path dp, bp;
+		
+		bp = b.doRun().getPath();
+		dp = d.doRun().getPath();
+		
+		if (bp != null && dp != null) {
+			// Test if the arcs are the same
+			Iterator<Arc> ba = bp.getArcs().iterator();
+			Iterator<Arc> da = dp.getArcs().iterator();
+			
+			while (ba.hasNext() && da.hasNext()) {
+				if(ba.next().getOrigin().equals(da.next().getDestination()))
+					fail();
+			}
+			
+			// One has more arcs than the other one
+			if (ba.hasNext() || da.hasNext())
+				fail();
+			
+			return;
+		}
+		// If the two path are null, it's still the same so it's great
+		else if (bp == null && dp == null)
+			return;
+		else
+			fail();
+
+	}
+	
+	@Test
+	public void testRandomInsaMapA0() throws IOException {
+		// Fetch the map
 		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/insa.mapgr";
 	
 		GraphReader reader = new BinaryGraphReader(
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
 
+		// Get the graph from the map
 		Graph g = reader.read();
 
 		Random r = new Random();
@@ -195,30 +297,94 @@ public class DijkstraTest {
 		bp = b.doRun().getPath();
 		dp = d.doRun().getPath();
 		
-		// Test if the arcs are the same
-		Iterator<Arc> ba = bp.getArcs().iterator();
-		Iterator<Arc> da = dp.getArcs().iterator();
-		
-		while (ba.hasNext() && da.hasNext()) {
-			if(ba.next().getOrigin().equals(da.next().getDestination()))
+		if (bp != null && dp != null) {
+			// Test if the arcs are the same
+			Iterator<Arc> ba = bp.getArcs().iterator();
+			Iterator<Arc> da = dp.getArcs().iterator();
+			
+			while (ba.hasNext() && da.hasNext()) {
+				if(ba.next().getOrigin().equals(da.next().getDestination()))
+					fail();
+			}
+			
+			// One has more arcs than the other one
+			if (ba.hasNext() || da.hasNext())
 				fail();
+			
+			return;
 		}
-		
-		// One has more arcs than the other one
-		if (ba.hasNext() || da.hasNext())
+		// If the two path are null, it's still the same so it's great
+		else if (bp == null && dp == null)
+			return;
+		else
 			fail();
-		
-		return;
 
 	}
 	
 	@Test
-	public void testRandomCarreDenseMap() throws IOException {
-		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre-dense.mapgr";
+	public void testRandomInsaMapA3() throws IOException {
+		// Fetch the map
+		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/insa.mapgr";
 	
 		GraphReader reader = new BinaryGraphReader(
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
 
+		// Get the graph from the map
+		Graph g = reader.read();
+
+		Random r = new Random();
+		int r1 = 0;
+		int r2 = r1;
+		
+		while (r1 == r2) {
+			r1 = r.nextInt(g.size());
+			r2 = r.nextInt(g.size());
+		}
+
+		Node origin      = g.get(r1);
+		Node destination = g.get(r2);
+
+		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(g, origin, destination, AI2));
+		DijkstraAlgorithm d    = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI2));
+		
+		Path dp, bp;
+		
+		bp = b.doRun().getPath();
+		dp = d.doRun().getPath();
+		
+		if (bp != null && dp != null) {
+			// Test if the arcs are the same
+			Iterator<Arc> ba = bp.getArcs().iterator();
+			Iterator<Arc> da = dp.getArcs().iterator();
+			
+			while (ba.hasNext() && da.hasNext()) {
+				if(ba.next().getOrigin().equals(da.next().getDestination()))
+					fail();
+			}
+			
+			// One has more arcs than the other one
+			if (ba.hasNext() || da.hasNext())
+				fail();
+			
+			return;
+		}
+		// If the two path are null, it's still the same so it's great
+		else if (bp == null && dp == null)
+			return;
+		else
+			fail();
+
+	}
+	
+	@Test
+	public void testRandomToulouseMapA0() throws IOException {
+		// Fetch the map
+		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/toulouse.mapgr";
+	
+		GraphReader reader = new BinaryGraphReader(
+				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
+
+		// Get the graph from the map
 		Graph g = reader.read();
 
 		Random r = new Random();
@@ -239,24 +405,84 @@ public class DijkstraTest {
 		Path dp, bp;
 		
 		bp = b.doRun().getPath();
-		System.out.println("Bellman Ford just finished !");
 		dp = d.doRun().getPath();
-		System.out.println("Dijkstra just finished !");
 		
-		// Test if the arcs are the same
-		Iterator<Arc> ba = bp.getArcs().iterator();
-		Iterator<Arc> da = dp.getArcs().iterator();
-		
-		while (ba.hasNext() && da.hasNext()) {
-			if(ba.next().getOrigin().equals(da.next().getDestination()))
+		if (bp != null && dp != null) {
+			// Test if the arcs are the same
+			Iterator<Arc> ba = bp.getArcs().iterator();
+			Iterator<Arc> da = dp.getArcs().iterator();
+			
+			while (ba.hasNext() && da.hasNext()) {
+				if(ba.next().getOrigin().equals(da.next().getDestination()))
+					fail();
+			}
+			
+			// One has more arcs than the other one
+			if (ba.hasNext() || da.hasNext())
 				fail();
+			
+			return;
 		}
-		
-		// One has more arcs than the other one
-		if (ba.hasNext() || da.hasNext())
+		// If the two path are null, it's still the same so it's great
+		else if (bp == null && dp == null)
+			return;
+		else
 			fail();
+
+	}
+	
+	@Test
+	public void testRandomToulouseMapA3() throws IOException {
+		// Fetch the map
+		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/toulouse.mapgr";
+	
+		GraphReader reader = new BinaryGraphReader(
+				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
+
+		// Get the graph from the map
+		Graph g = reader.read();
+
+		Random r = new Random();
+		int r1 = 0;
+		int r2 = r1;
 		
-		return;
+		while (r1 == r2) {
+			r1 = r.nextInt(g.size());
+			r2 = r.nextInt(g.size());
+		}
+
+		Node origin      = g.get(r1);
+		Node destination = g.get(r2);
+
+		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(g, origin, destination, AI2));
+		DijkstraAlgorithm d    = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI2));
+		
+		Path dp, bp;
+		
+		bp = b.doRun().getPath();
+		dp = d.doRun().getPath();
+		
+		if (bp != null && dp != null) {
+			// Test if the arcs are the same
+			Iterator<Arc> ba = bp.getArcs().iterator();
+			Iterator<Arc> da = dp.getArcs().iterator();
+			
+			while (ba.hasNext() && da.hasNext()) {
+				if(ba.next().getOrigin().equals(da.next().getDestination()))
+					fail();
+			}
+			
+			// One has more arcs than the other one
+			if (ba.hasNext() || da.hasNext())
+				fail();
+			
+			return;
+		}
+		// If the two path are null, it's still the same so it's great
+		else if (bp == null && dp == null)
+			return;
+		else
+			fail();
 
 	}
 }

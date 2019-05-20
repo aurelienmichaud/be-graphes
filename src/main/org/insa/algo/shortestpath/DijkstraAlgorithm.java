@@ -65,6 +65,17 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         if (this.g.size() <= 0)
         	throw new ArrayIndexOutOfBoundsException();
         
+        if (this.g.size() == 1) {
+        	
+        	solutionArcs = null;
+        	
+        	solutionPath = null;
+	        
+	        solution = new ShortestPathSolution(data, Status.INFEASIBLE, solutionPath);
+	        
+	        return solution;
+        }
+        
         if (this.destination.equals(this.origin)) {
         	
         	solutionArcs = new ArrayList<Arc>();
