@@ -79,6 +79,10 @@ public class Label implements Comparable<Label> {
 		this.fatherArc = Father;
 	}
 	
+	public double getTotalCost() {
+		return this.cost;
+	}
+	
 	public boolean equals(Label other) {
 		if (this.current_node.equals(other.current_node))
 			return true;
@@ -86,9 +90,9 @@ public class Label implements Comparable<Label> {
 	}
 	
 	public int compareTo(Label other) {
-		if (this.getCost() - other.getCost() > 0.0)
+		if (this.getTotalCost() - other.getTotalCost() > 0.0)
 			return 1;
-		else if (this.getCost() - other.getCost() < 0.0)
+		else if (this.getTotalCost() - other.getTotalCost() < 0.0)
 			return -1;
 		else
 			return 0;

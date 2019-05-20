@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.util.Iterator;
 import java.io.IOException;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -13,7 +12,6 @@ import java.io.DataInputStream;
 import java.io.FileInputStream;
 
 import java.util.Random;
-import java.util.Random.*;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -28,15 +26,12 @@ import org.insa.algo.shortestpath.*;
 import org.insa.graph.Graph;
 import org.insa.graph.Path;
 import org.insa.graph.io.BinaryGraphReader;
-import org.insa.graph.io.BinaryPathReader;
 import org.insa.graph.io.GraphReader;
-import org.insa.graph.io.PathReader;
 
 
 public class DijkstraTest {
-	
-	private static Graph graph;
-	private static Graph nullGraph, emptyGraph, singleNodeGraph, loopGraph, startEqualsEndGraph;
+
+	private static Graph nullGraph, emptyGraph, singleNodeGraph, startEqualsEndGraph, exampleGraph;
 	
 	private static Node[] nodes;
 	
@@ -47,11 +42,9 @@ public class DijkstraTest {
 	private static ArcInspector AI0;
 	private static ArcInspector AI2;
 	
-	private static BellmanFordAlgorithm bEmptyGraph, bEmptyGraphButNodes, bSingleNodeGraph, bLoopGraph, bStartEqualsEndGraph;
+	private static BellmanFordAlgorithm bSingleNodeGraph, bStartEqualsEndGraph, bExampleGraph;
 	
-	private static ShortestPathSolution sps;
-	
-	private static DijkstraAlgorithm dNullGraph, dEmptyGraph, dEmptyGraphButNodes, dSingleNodeGraph, dLoopGraph, dStartEqualsEndGraph;
+	private static DijkstraAlgorithm dNullGraph, dEmptyGraph, dEmptyGraphButNodes, dSingleNodeGraph, dStartEqualsEndGraph, dExampleGraph;
 	
 	@BeforeClass
 	public static void initAll() throws IOException {
@@ -70,6 +63,7 @@ public class DijkstraTest {
 		
 		Node.linkNodes(n0, n0, 0, speed10, null);
 
+		// Nodes from JUnit Path tests
 		// Add arcs...
 		a2b   = Node.linkNodes(nodes[0], nodes[1], 10, speed10, null);
 		a2c   = Node.linkNodes(nodes[0], nodes[2], 15, speed10, null);
@@ -86,23 +80,30 @@ public class DijkstraTest {
 		emptyGraph          = new Graph("ID", "", new ArrayList<Node>(), null);
 		singleNodeGraph     = new Graph("ID", "", Arrays.asList(new Node[] { n0 }), null);
 		startEqualsEndGraph = new Graph("ID", "", Arrays.asList(nodes), null);
+		exampleGraph        = startEqualsEndGraph;
 
-		AI0 = ArcInspectorFactory.getAllFilters().get(0);
-		AI2 = ArcInspectorFactory.getAllFilters().get(3);
+		AI0 = ArcInspectorFactory.getAllFilters().get(0); // All roads, shortest path
+		AI2 = ArcInspectorFactory.getAllFilters().get(3); // Only car roads, fastest path
 		
 		// Previous tests to know how Dijkstra should behave
 		//bNullGraph           = new BellmanFordAlgorithm(new ShortestPathData(nullGraph, null, null, AI0));
 		//bEmptyGraph          = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, null, null, AI0));
-		bEmptyGraphButNodes  = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, n0, n0, AI0));
+		//bEmptyGraphButNodes  = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, n0, n0, AI0));
 		bSingleNodeGraph     = new BellmanFordAlgorithm(new ShortestPathData(singleNodeGraph, n0, n0, AI0));
 		bStartEqualsEndGraph = new BellmanFordAlgorithm(new ShortestPathData(startEqualsEndGraph, n0, n0, AI0));
+		bExampleGraph        = new BellmanFordAlgorithm(new ShortestPathData(exampleGraph, nodes[0], nodes[4], AI0));
 		
 		dNullGraph           = new DijkstraAlgorithm(new ShortestPathData(nullGraph, null, null, AI0));
 		dEmptyGraph          = new DijkstraAlgorithm(new ShortestPathData(emptyGraph, null, null, AI0));
 		dEmptyGraphButNodes  = new DijkstraAlgorithm(new ShortestPathData(emptyGraph, n0, n0, AI0));
 		dSingleNodeGraph     = new DijkstraAlgorithm(new ShortestPathData(singleNodeGraph, n0, n0, AI0));
 		dStartEqualsEndGraph = new DijkstraAlgorithm(new ShortestPathData(startEqualsEndGraph, n0, n0, AI0));
+		dExampleGraph        = new DijkstraAlgorithm(new ShortestPathData(exampleGraph, nodes[0], nodes[4], AI0));
 	}
+	
+	// =====================================================================
+	//						Sensitive cases
+	// =====================================================================
 
 	@Test(expected = NullPointerException.class)
 	public void testNullGraph() {
@@ -140,10 +141,19 @@ public class DijkstraTest {
 		bp = bStartEqualsEndGraph.doRun().getPath();
 		dp = dStartEqualsEndGraph.doRun().getPath();
 		
-		if(bp == null)
-			System.out.println("bp == null");
-		if(dp == null)
-			System.out.println("dp == null");
+		// bp == null && dp == null
+		if(bp != dp)
+			fail();
+		else
+			return;
+	}	
+	
+	@Test
+	public void testExampleGraph() {
+		Path dp, bp;
+		
+		bp = bExampleGraph.doRun().getPath();
+		dp = dExampleGraph.doRun().getPath();
 		
 		if (bp != null && dp != null) {
 			// Test if the arcs are the same
@@ -151,11 +161,7 @@ public class DijkstraTest {
 			Iterator<Arc> da = dp.getArcs().iterator();
 			
 			while (ba.hasNext() && da.hasNext()) {
-				Arc baa = ba.next();
-				Arc daa = da.next();
-				System.out.println("b = " + baa.getOrigin().getId());
-				System.out.println("d" + daa.getOrigin().getId());
-				if(baa.getOrigin().equals(daa.getDestination()))
+				if(ba.next().getOrigin().equals(da.next().getDestination()))
 					fail();
 			}
 			
@@ -170,7 +176,11 @@ public class DijkstraTest {
 			return;
 		else
 			fail();
-	}	
+	}
+	
+	// =====================================================================
+	//						Dijkstra test on real maps
+	// =====================================================================
 
 	@Test
 	public void testRandomCarreMapA0() throws IOException {

@@ -1,9 +1,7 @@
 package org.insa.algo.shortestpath;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.insa.algo.utils.BinaryHeap;
 
@@ -65,7 +63,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         if (this.g.size() <= 0)
         	throw new ArrayIndexOutOfBoundsException();
         
-        if (this.g.size() == 1) {
+        if (this.g.size() == 1 || this.origin.equals(this.destination)) {
         	
         	solutionArcs = null;
         	
