@@ -3,6 +3,7 @@ package org.insa.algo.shortestpath;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import org.insa.algo.AbstractInputData.Mode;
 import org.insa.algo.AbstractSolution.Status;
 import org.insa.algo.utils.BinaryHeap;
 import org.insa.graph.Arc;
@@ -68,7 +69,10 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
         for (int i = 0; i < g.size(); i++) {
         	labels.add(new LabelStar(g.get(i)));
         	// Calculate the estimated path to the destination
-        	labels.get(i).setEstimatedCostToGoal(labels.get(i).getNode().getPoint().distanceTo(destination.getPoint()));
+        	if (data.getMode() == Mode.LENGTH)
+        		labels.get(i).setEstimatedCostToGoal(labels.get(i).getNode().getPoint().distanceTo(destination.getPoint()));
+        	else
+        		labels.get(i).setEstimatedCostToGoal(labels.get(i).getNode().getPoint().distanceTo(destination.getPoint()) / data.getMaximumSpeed());
         }
 
         while (!bh.isEmpty()) {
@@ -92,22 +96,13 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
 		        		if (!(data.isAllowed(successorArc))) {	
 		        			continue;
 		        		}
-		        		else if (successorLabel.getTotalCost() == -1 || successorLabel.getTotalCost() > (currentLabel.getCost() + data.getCost(successorArc) + successorLabel.getEstimatedCostToGoal())/*successorLabel.compareTo(currentLabel) < 0*/) {	
+		        		else if (successorLabel.getTotalCost() > (currentLabel.getCost() + data.getCost(successorArc) + successorLabel.getEstimatedCostToGoal())/*successorLabel.compareTo(currentLabel) < 0*/) {	
 	        				successorLabel.setCost(currentLabel.getCost() + data.getCost(successorArc));
 
 	        				successorLabel.setFatherArc(successorArc);
 
 	        				bh.insert(successorLabel);
 	        			}
-//		        		else if (successorLabel.getTotalCost() == (currentLabel.getCost() + data.getCost(successorArc) + successorLabel.getEstimatedCostToGoal())) {
-//		        			if (successorLabel.getEstimatedCostToGoal() < currentLabel.getEstimatedCostToGoal()) {
-//		        				successorLabel.setCost(currentLabel.getCost() + data.getCost(successorArc));
-//
-//		        				successorLabel.setFatherArc(successorArc);
-//
-//		        				bh.insert(successorLabel);
-//		        			}
-//		        		}
 	        		}
 	        	}
         	}
