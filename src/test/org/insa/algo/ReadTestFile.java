@@ -26,7 +26,7 @@ public class ReadTestFile {
 	private static ArcInspector AI0;
 	private static ArcInspector AI2;
 	
-	public static int readTestFile(String file_path, String map_path) throws IOException {
+	public static int readTestFile(String path_rw, String file_name, String map_path) throws IOException {
 		
 		String map_name;
 		
@@ -45,14 +45,16 @@ public class ReadTestFile {
 		int r1;
 		int r2;
 				
-		try (BufferedReader br = new BufferedReader(new FileReader(file_path))) {
+		try (BufferedReader br = new BufferedReader(new FileReader(path_rw + file_name))) {
 			
 			String l = br.readLine();
 			String[] node_ids;
+			String pathDijkstra;
+			String pathAStar;
 			
 			map_name = l;
 			
-			br.readLine();
+			l = br.readLine();
 			
 			if (l.compareTo("0") == 0)
 				m = Mode.LENGTH;
@@ -63,8 +65,34 @@ public class ReadTestFile {
 			
 			test_nb = Integer.parseInt(l);
 			
-			try (Writer w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/home/a_michau/Documents/BE_graphe/" + map_name + "_" + test_nb + "_" + "dijkstra"), "utf-8"))) {
+			if (m == Mode.LENGTH) {
+	    		pathDijkstra = path_rw + map_name + "_" + "distance_" + test_nb + "_" + "dijkstra" + ".txt";
+	    		pathAStar = path_rw + map_name + "_" + "distance_" + test_nb + "_" + "astar" + ".txt";
+			}
+	    	else {
+	    		pathDijkstra = path_rw + map_name + "_" + "temps_" + test_nb + "_" + "dijkstra" + ".txt";
+	    		pathAStar = path_rw + map_name + "_" + "temps_" + test_nb + "_" + "astar" + ".txt";
+	    	}
 			
+			try (Writer w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathDijkstra), "utf-8"))) {
+			
+				w.write(map_name);
+				w.write(System.lineSeparator());
+				
+				if (m == Mode.LENGTH)
+					w.write("0");
+				else
+					w.write("1");
+				
+				w.write(System.lineSeparator());
+				
+				w.write(Integer.toString(test_nb));
+				w.write(System.lineSeparator());
+				w.close();
+			}
+			
+			try (Writer w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathAStar), "utf-8"))) {
+				
 				w.write(map_name);
 				w.write(System.lineSeparator());
 				
@@ -91,7 +119,7 @@ public class ReadTestFile {
 				
 				r1 = Integer.parseInt(node_ids[0]);
 				r2 = Integer.parseInt(node_ids[1]);
-				
+
 				if (m == Mode.LENGTH) {
 					d = new DijkstraAlgorithm(new ShortestPathData(g, g.get(r1), g.get(r2), AI0));
 					a = new AStarAlgorithm(new ShortestPathData(g, g.get(r1), g.get(r2), AI0));
@@ -104,6 +132,24 @@ public class ReadTestFile {
 				d.doRun();
 				a.doRun();
 				
+				WriteAlgoData.writeAlgoData(pathDijkstra,
+						g.get(r1).getId(),
+						g.get(r2).getId(),
+						d.getCost(),
+						d.getCPUTime(),
+						d.getExploredNb(),
+						d.getMarkedNb(),
+						d.getBHMaxSize());
+				
+				WriteAlgoData.writeAlgoData(pathAStar,
+						g.get(r1).getId(),
+						g.get(r2).getId(),
+						a.getCost(),
+						a.getCPUTime(),
+						a.getExploredNb(),
+						a.getMarkedNb(),
+						a.getBHMaxSize());
+
 				l = br.readLine();
 			}
 			

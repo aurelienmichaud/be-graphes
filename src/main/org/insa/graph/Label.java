@@ -1,5 +1,6 @@
 package org.insa.graph;
 
+
 public class Label implements Comparable<Label> {
 	
 	private Node current_node;

@@ -2,12 +2,18 @@ package org.insa.algo.shortestpath;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -23,14 +29,35 @@ import org.insa.graph.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	
+	private float cost;
+	private long cpu_time;
+	private long marked_nb;
+	private long explored_nb;
+	private int bh_max_size;
+
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
+        this.marked_nb   = 0;
+        this.explored_nb = 0;
+        this.bh_max_size = 0;
+    }
+    
+    public Label newLabel() {
+    	return new Label();
+    }
+    
+    public Label newLabel(Node n, ShortestPathData data) {
+    	return new Label(n);
+    }
+    
+    public Label newLabel(Node n, double cost, ShortestPathData data) {
+    	return new Label(n, cost);
     }
 
     @Override
     public ShortestPathSolution doRun() throws ArrayIndexOutOfBoundsException, NullPointerException {
     	
-    	int marked_nb = 0;
+    	long start_cpu_time;
     	
     	ShortestPathData data = getInputData();
     	
@@ -47,7 +74,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Path solutionPath;
         ArrayList<Arc> solutionArcs;
         
-        Label destinationL;
+        Label destinationLabel;
         
         Label currentLabel;
         Label successorLabel;
@@ -81,17 +108,18 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	
         }
         
-        bh.insert(new Label(origin, 0.0));
+        bh.insert(newLabel(origin, 0.0, data));
           
         for (int i = 0; i < g.size(); i++) {
         	if (g.get(i).compareTo(origin) == 0) {
         		labels.add(bh.findMin());
         	}
         	else {
-        		labels.add(new Label(g.get(i)));
+        		labels.add(newLabel(g.get(i), data));
         	}
         }
 
+        start_cpu_time = System.nanoTime();
         while (!bh.isEmpty()) {
         	
         	currentLabel = bh.findMin();
@@ -104,11 +132,13 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	currentLabel.setMark(true);
         	// We could not see the path because of the color
         	//notifyNodeMarked(currentLabel.getNode());
-        	marked_nb++;
+        	this.marked_nb++;
         	
         	if (currentLabel.getNode().hasSuccessors()) {
         	
 	        	for (Arc successorArc: currentLabel.getNode().getSuccessors()) {
+	        		
+	        		this.explored_nb++;
 	        		
 	        		successorLabel = labels.get(successorArc.getDestination().getId());
 	        		
@@ -117,13 +147,16 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 		        		if (!(data.isAllowed(successorArc))) {	
 		        			continue;
 		        		}
-		        		else if (successorLabel.getTotalCost() > (currentLabel.getTotalCost() + data.getCost(successorArc))) {
+		        		else if (successorLabel.getCost() > (currentLabel.getCost() + data.getCost(successorArc))) {
 	        				
-	        				successorLabel.setCost(currentLabel.getTotalCost() + data.getCost(successorArc));
+	        				successorLabel.setCost(currentLabel.getCost() + data.getCost(successorArc));
 	        				
 	        				successorLabel.setFatherArc(successorArc);
 
 	        				bh.insert(successorLabel);
+	        				
+	        				if (bh.size() > this.bh_max_size)
+	        					this.bh_max_size = bh.size();
 	        			}
 	        		}
 	        	}
@@ -134,21 +167,23 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	bh.remove(currentLabel);
         }
         
-        destinationL = labels.get(destination.getId());
+        this.cpu_time = System.nanoTime() - start_cpu_time;
+        
+        destinationLabel = labels.get(destination.getId());
         
         solutionArcs = new ArrayList<Arc>();
         
         
-        if (destinationL.getFatherArc() == null) {
+        if (destinationLabel.getFatherArc() == null) {
         	
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
         	
         } else {
         
-	        while (!(destinationL.getNode().equals(origin))) {
+	        while (!(destinationLabel.getNode().equals(origin))) {
 	        	
-	        	solutionArcs.add(destinationL.getFatherArc());
-	        	destinationL = labels.get(destinationL.getFather().getId());
+	        	solutionArcs.add(destinationLabel.getFatherArc());
+	        	destinationLabel = labels.get(destinationLabel.getFather().getId());
 	        	
 	        }
 	        
@@ -160,22 +195,64 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         
         try {
-        	this.writeData("toulouse", Mode.LENGTH, 100);
-        } catch(IOException e) {
-        	
+        	this.cost = solution.getPath().getLength();
+        } catch(NullPointerException e) {
+        	// No solution
+        	this.cost = -1;
         }
         
         return solution;
     }
-    
-    public void writeData(String map_name, Mode m, int test_nb) throws IOException {
-    	
-    	try (Writer w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/home/a_michau/Documents/BE_graphe/" + map_name + "_" + test_nb + "_" + "dijkstra"), "utf-8"))) {
-			
-    		w.write("bonjour");
-			
-			w.close();
-		}
-    	
+
+    public float getCost() {
+    	return this.cost;
     }
+    
+    public long getCPUTime() {
+    	return this.cpu_time;
+    }
+    
+    public long getExploredNb() {
+    	return this.explored_nb;
+    }
+    
+    public long getMarkedNb() {
+    	return this.marked_nb;
+    }
+    
+    public int getBHMaxSize() {
+    	return this.bh_max_size;
+    }
+    
+//    public void writeData(float cost) throws IOException {
+//    	
+//    	String data_to_write;
+//    	
+//    	if (this.hasASolution == true) {
+//    	
+//	    	data_to_write = this.getInputData().getOrigin().getId() + " " +
+//	    			this.getInputData().getDestination().getId() + " " +
+//	    			Float.toString(cost) + " " +
+//	    			this.cpu_time + " " +
+//	    			this.explored_nb + " " +
+//	    			this.marked_nb;
+//    	} else {
+//    		// There is no solution, we still write something 
+//    		data_to_write = "N N N N N N";
+//    	}
+//
+//    	try {
+//    		
+//    		FileWriter fw = new FileWriter(this.dataFilePath, true);
+//    		fw.write(data_to_write);
+//    		fw.write(System.lineSeparator());
+//    		fw.flush();
+//    		fw.close();
+//    	}
+//    	catch (NoSuchFileException e) {
+//    		System.out.println(e);
+//    	}
+//    	
+//
+//    }
 }

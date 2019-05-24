@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Random;
 
-import org.insa.algo.shortestpath.BellmanFordAlgorithm;
+import org.insa.algo.shortestpath.DijkstraAlgorithm;
 import org.insa.algo.shortestpath.AStarAlgorithm;
 import org.insa.algo.shortestpath.ShortestPathData;
 import org.insa.graph.Arc;
@@ -42,7 +42,7 @@ public class AStarAlgorithmTest {
 	private static ArcInspector AI0;
 	private static ArcInspector AI2;
 	
-	private static BellmanFordAlgorithm bSingleNodeGraph, bStartEqualsEndGraph;
+	private static DijkstraAlgorithm bSingleNodeGraph, bStartEqualsEndGraph;
 	
 	private static AStarAlgorithm dNullGraph, dEmptyGraph, dEmptyGraphButNodes, dSingleNodeGraph, dStartEqualsEndGraph;
 	
@@ -85,11 +85,11 @@ public class AStarAlgorithmTest {
 		AI2 = ArcInspectorFactory.getAllFilters().get(3); // Only car roads, fastest path
 		
 		// Previous tests to know how Dijkstra should behave
-		//bNullGraph           = new BellmanFordAlgorithm(new ShortestPathData(nullGraph, null, null, AI0));
-		//bEmptyGraph          = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, null, null, AI0));
-		//bEmptyGraphButNodes  = new BellmanFordAlgorithm(new ShortestPathData(emptyGraph, n0, n0, AI0));
-		bSingleNodeGraph     = new BellmanFordAlgorithm(new ShortestPathData(singleNodeGraph, n0, n0, AI0));
-		bStartEqualsEndGraph = new BellmanFordAlgorithm(new ShortestPathData(startEqualsEndGraph, n0, n0, AI0));
+		//bNullGraph           = new DijkstraAlgorithm(new ShortestPathData(nullGraph, null, null, AI0));
+		//bEmptyGraph          = new DijkstraAlgorithm(new ShortestPathData(emptyGraph, null, null, AI0));
+		//bEmptyGraphButNodes  = new DijkstraAlgorithm(new ShortestPathData(emptyGraph, n0, n0, AI0));
+		bSingleNodeGraph     = new DijkstraAlgorithm(new ShortestPathData(singleNodeGraph, n0, n0, AI0));
+		bStartEqualsEndGraph = new DijkstraAlgorithm(new ShortestPathData(startEqualsEndGraph, n0, n0, AI0));
 		
 		dNullGraph           = new AStarAlgorithm(new ShortestPathData(nullGraph, null, null, AI0));
 		dEmptyGraph          = new AStarAlgorithm(new ShortestPathData(emptyGraph, null, null, AI0));
@@ -164,7 +164,7 @@ public class AStarAlgorithmTest {
 		Node origin      = g.get(r.nextInt(g.size()));
 		Node destination = g.get(r.nextInt(g.size()));
 
-		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(g, origin, destination, AI0));
+		DijkstraAlgorithm b = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI0));
 		AStarAlgorithm d    = new AStarAlgorithm(new ShortestPathData(g, origin, destination, AI0));
 		
 		Path dp, bp;
@@ -211,7 +211,7 @@ public class AStarAlgorithmTest {
 		Node origin      = g.get(r.nextInt(g.size()));
 		Node destination = g.get(r.nextInt(g.size()));
 
-		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(g, origin, destination, AI2));
+		DijkstraAlgorithm b = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI2));
 		AStarAlgorithm d    = new AStarAlgorithm(new ShortestPathData(g, origin, destination, AI2));
 		
 		Path dp, bp;
@@ -266,7 +266,7 @@ public class AStarAlgorithmTest {
 		Node origin      = g.get(r1);
 		Node destination = g.get(r2);
 
-		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(g, origin, destination, AI0));
+		DijkstraAlgorithm b = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI0));
 		AStarAlgorithm d    = new AStarAlgorithm(new ShortestPathData(g, origin, destination, AI0));
 		
 		Path dp, bp;
@@ -321,7 +321,7 @@ public class AStarAlgorithmTest {
 		Node origin      = g.get(r1);
 		Node destination = g.get(r2);
 
-		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(g, origin, destination, AI2));
+		DijkstraAlgorithm b = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI2));
 		AStarAlgorithm d    = new AStarAlgorithm(new ShortestPathData(g, origin, destination, AI2));
 		
 		Path dp, bp;
@@ -376,7 +376,7 @@ public class AStarAlgorithmTest {
 		Node origin      = g.get(r1);
 		Node destination = g.get(r2);
 
-		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(g, origin, destination, AI0));
+		DijkstraAlgorithm b = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI0));
 		AStarAlgorithm d    = new AStarAlgorithm(new ShortestPathData(g, origin, destination, AI0));
 		
 		Path dp, bp;
@@ -431,7 +431,117 @@ public class AStarAlgorithmTest {
 		Node origin      = g.get(r1);
 		Node destination = g.get(r2);
 
-		BellmanFordAlgorithm b = new BellmanFordAlgorithm(new ShortestPathData(g, origin, destination, AI2));
+		DijkstraAlgorithm b = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI2));
+		AStarAlgorithm d    = new AStarAlgorithm(new ShortestPathData(g, origin, destination, AI2));
+		
+		Path dp, bp;
+		
+		bp = b.doRun().getPath();
+		dp = d.doRun().getPath();
+		
+		if (bp != null && dp != null) {
+			// Test if the arcs are the same
+			Iterator<Arc> ba = bp.getArcs().iterator();
+			Iterator<Arc> da = dp.getArcs().iterator();
+			
+			while (ba.hasNext() && da.hasNext()) {
+				if(ba.next().getOrigin().equals(da.next().getDestination()))
+					fail();
+			}
+			
+			// One has more arcs than the other one
+			if (ba.hasNext() || da.hasNext())
+				fail();
+			
+			return;
+		}
+		// If the two path are null, it's still the same so it's great
+		else if (bp == null && dp == null)
+			return;
+		else
+			fail();
+
+	}
+	
+	@Test
+	public void testRandomCarreDenseMapA0() throws IOException {
+		// Fetch the map
+		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre-dense.mapgr";
+	
+		GraphReader reader = new BinaryGraphReader(
+				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
+
+		// Get the graph from the map
+		Graph g = reader.read();
+
+		Random r = new Random();
+		int r1 = 0;
+		int r2 = r1;
+		
+		while (r1 == r2) {
+			r1 = r.nextInt(g.size());
+			r2 = r.nextInt(g.size());
+		}
+
+		Node origin      = g.get(r1);
+		Node destination = g.get(r2);
+
+		DijkstraAlgorithm b = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI0));
+		AStarAlgorithm d    = new AStarAlgorithm(new ShortestPathData(g, origin, destination, AI0));
+		
+		Path dp, bp;
+		
+		bp = b.doRun().getPath();
+		dp = d.doRun().getPath();
+		
+		if (bp != null && dp != null) {
+			// Test if the arcs are the same
+			Iterator<Arc> ba = bp.getArcs().iterator();
+			Iterator<Arc> da = dp.getArcs().iterator();
+			
+			while (ba.hasNext() && da.hasNext()) {
+				if(ba.next().getOrigin().equals(da.next().getDestination()))
+					fail();
+			}
+			
+			// One has more arcs than the other one
+			if (ba.hasNext() || da.hasNext())
+				fail();
+			
+			return;
+		}
+		// If the two path are null, it's still the same so it's great
+		else if (bp == null && dp == null)
+			return;
+		else
+			fail();
+
+	}
+	
+	@Test
+	public void testRandomCarreDenseMapA2() throws IOException {
+		// Fetch the map
+		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre-dense.mapgr";
+	
+		GraphReader reader = new BinaryGraphReader(
+				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
+
+		// Get the graph from the map
+		Graph g = reader.read();
+
+		Random r = new Random();
+		int r1 = 0;
+		int r2 = r1;
+		
+		while (r1 == r2) {
+			r1 = r.nextInt(g.size());
+			r2 = r.nextInt(g.size());
+		}
+
+		Node origin      = g.get(r1);
+		Node destination = g.get(r2);
+
+		DijkstraAlgorithm b = new DijkstraAlgorithm(new ShortestPathData(g, origin, destination, AI2));
 		AStarAlgorithm d    = new AStarAlgorithm(new ShortestPathData(g, origin, destination, AI2));
 		
 		Path dp, bp;

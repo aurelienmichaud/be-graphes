@@ -16,7 +16,7 @@ public class PerformanceTests {
 	
 	@Test
 	public void testAStar() throws IOException {
-		CreateTestFile.createTestFile("/home/a_michau/Documents/BE_graphe/toulouse_distance_100_data.txt", "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/toulouse.mapgr", "Toulouse", 100, Mode.LENGTH);
-		ReadTestFile.readTestFile("/home/a_michau/Documents/BE_graphe/toulouse_distance_100_data.txt", "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/toulouse.mapgr");
+		CreateTestFile.createTestFile("/home/a_michau/Documents/BE_graphe/toulouse_distance_100_data.txt", "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/toulouse.mapgr", "toulouse", 100, Mode.LENGTH);
+		ReadTestFile.readTestFile("/home/a_michau/Documents/BE_graphe/", "toulouse_distance_100_data.txt", "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/toulouse.mapgr");
 	}
 }
