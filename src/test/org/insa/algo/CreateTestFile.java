@@ -19,7 +19,7 @@ import org.insa.algo.AbstractInputData.Mode;
 
 public class CreateTestFile<E> {	
 	
-	public static int createTestFile(String file_path, String map_path, int test_nb, Mode m) throws IOException {
+	public static int createTestFile(String file_path, String map_path, String map_name, int test_nb, Mode m) throws IOException {
 			
 		GraphReader reader = new BinaryGraphReader(
 					new DataInputStream(new BufferedInputStream(new FileInputStream(map_path))));
@@ -33,6 +33,9 @@ public class CreateTestFile<E> {
 				
 		try (Writer w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_path), "utf-8"))) {
 			
+			w.write(map_name);
+			w.write(System.lineSeparator());
+			
 			if (m == Mode.LENGTH)
 				w.write("0");
 			else
@@ -41,7 +44,6 @@ public class CreateTestFile<E> {
 			w.write(System.lineSeparator());
 			
 			w.write(Integer.toString(test_nb));
-			
 			w.write(System.lineSeparator());
 			
 			for (int i = 0; i < test_nb; i++, r1 = r2) {

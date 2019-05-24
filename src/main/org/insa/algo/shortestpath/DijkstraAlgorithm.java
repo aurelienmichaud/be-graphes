@@ -1,10 +1,18 @@
 package org.insa.algo.shortestpath;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import org.insa.algo.utils.BinaryHeap;
-
+import org.insa.algo.AbstractInputData.Mode;
 import org.insa.algo.AbstractSolution.Status;
 import org.insa.graph.Arc;
 import org.insa.graph.Graph;
@@ -21,6 +29,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
     @Override
     public ShortestPathSolution doRun() throws ArrayIndexOutOfBoundsException, NullPointerException {
+    	
+    	int marked_nb = 0;
     	
     	ShortestPathData data = getInputData();
     	
@@ -94,6 +104,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	currentLabel.setMark(true);
         	// We could not see the path because of the color
         	//notifyNodeMarked(currentLabel.getNode());
+        	marked_nb++;
         	
         	if (currentLabel.getNode().hasSuccessors()) {
         	
@@ -148,6 +159,23 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         }
         
+        try {
+        	this.writeData("toulouse", Mode.LENGTH, 100);
+        } catch(IOException e) {
+        	
+        }
+        
         return solution;
+    }
+    
+    public void writeData(String map_name, Mode m, int test_nb) throws IOException {
+    	
+    	try (Writer w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/home/a_michau/Documents/BE_graphe/" + map_name + "_" + test_nb + "_" + "dijkstra"), "utf-8"))) {
+			
+    		w.write("bonjour");
+			
+			w.close();
+		}
+    	
     }
 }

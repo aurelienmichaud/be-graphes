@@ -31,7 +31,7 @@ import org.insa.algo.ReadTestFile;
 
 public class AStarAlgorithmTest {
 
-private static Graph nullGraph, emptyGraph, singleNodeGraph, startEqualsEndGraph;
+	private static Graph nullGraph, emptyGraph, singleNodeGraph, startEqualsEndGraph;
 	
 	private static Node[] nodes;
 	
