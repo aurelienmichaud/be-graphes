@@ -67,13 +67,22 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
         ((LabelStar)(bh.findMin())).setEstimatedCostToGoal(origin.getPoint().distanceTo(destination.getPoint()));
         
         for (int i = 0; i < g.size(); i++) {
-        	labels.add(new LabelStar(g.get(i)));
+        	
+        	if (g.get(i).compareTo(origin) == 0) {
+        		labels.add((LabelStar)bh.findMin());
+        	}
+        	else {
+        		labels.add(new LabelStar(g.get(i)));
+        	}
+        	
         	// Calculate the estimated path to the destination
         	if (data.getMode() == Mode.LENGTH)
         		labels.get(i).setEstimatedCostToGoal(labels.get(i).getNode().getPoint().distanceTo(destination.getPoint()));
         	else
-        		labels.get(i).setEstimatedCostToGoal(labels.get(i).getNode().getPoint().distanceTo(destination.getPoint()) / data.getMaximumSpeed());
+        		labels.get(i).setEstimatedCostToGoal(labels.get(i).getNode().getPoint().distanceTo(destination.getPoint()) / 130);
         }
+        
+        
 
         while (!bh.isEmpty()) {
         	
@@ -96,7 +105,7 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
 		        		if (!(data.isAllowed(successorArc))) {	
 		        			continue;
 		        		}
-		        		else if (successorLabel.getTotalCost() > (currentLabel.getCost() + data.getCost(successorArc) + successorLabel.getEstimatedCostToGoal())/*successorLabel.compareTo(currentLabel) < 0*/) {	
+		        		else if (successorLabel.getCost() > (currentLabel.getCost() + data.getCost(successorArc))/*successorLabel.getTotalCost() > (currentLabel.getCost() + data.getCost(successorArc) + successorLabel.getEstimatedCostToGoal())*/) {	
 	        				successorLabel.setCost(currentLabel.getCost() + data.getCost(successorArc));
 
 	        				successorLabel.setFatherArc(successorArc);

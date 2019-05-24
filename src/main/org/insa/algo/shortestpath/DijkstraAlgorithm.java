@@ -72,9 +72,14 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         
         bh.insert(new Label(origin, 0.0));
-        
+          
         for (int i = 0; i < g.size(); i++) {
-        	labels.add(new Label(g.get(i)));
+        	if (g.get(i).compareTo(origin) == 0) {
+        		labels.add(bh.findMin());
+        	}
+        	else {
+        		labels.add(new Label(g.get(i)));
+        	}
         }
 
         while (!bh.isEmpty()) {
