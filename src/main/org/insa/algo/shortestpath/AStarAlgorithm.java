@@ -89,10 +89,13 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
         	currentLabel = (LabelStar)bh.findMin();
         	
         	if (currentLabel.getNode().equals(destination)) {
+        		notifyDestinationReached(destination);
     			break;
     		}
         	
         	currentLabel.setMark(true);
+        	// We could not see the path because of the color
+        	//notifyNodeMarked(currentLabel.getNode());
         	
         	if (currentLabel.getNode().hasSuccessors()) {
         	

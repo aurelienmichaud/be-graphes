@@ -96,10 +96,6 @@ private static Graph nullGraph, emptyGraph, singleNodeGraph, startEqualsEndGraph
 		dEmptyGraphButNodes  = new AStarAlgorithm(new ShortestPathData(emptyGraph, n0, n0, AI0));
 		dSingleNodeGraph     = new AStarAlgorithm(new ShortestPathData(singleNodeGraph, n0, n0, AI0));
 		dStartEqualsEndGraph = new AStarAlgorithm(new ShortestPathData(startEqualsEndGraph, n0, n0, AI0));
-		
-		
-		CreateTestFile.createTestFile("/home/a_michau/Documents/BE_graphe/test_data.txt", "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/toulouse.mapgr", 10, Mode.LENGTH);
-		ReadTestFile.readTestFile("/home/a_michau/Documents/BE_graphe/test_data.txt", "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/toulouse.mapgr");
 	}
 	
 	// =====================================================================
