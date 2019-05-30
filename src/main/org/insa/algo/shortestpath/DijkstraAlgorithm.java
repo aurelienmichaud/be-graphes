@@ -29,6 +29,7 @@ import org.insa.graph.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 	
+	// For performance tests
 	private float cost;
 	private long cpu_time;
 	private long marked_nb;
@@ -119,6 +120,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         }
 
+	// ======================================== BEGINNING OF MAIN DIJKSTRA LOOP ============================
         start_cpu_time = System.nanoTime();
         while (!bh.isEmpty()) {
         	
@@ -166,6 +168,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	
         	bh.remove(currentLabel);
         }
+	// ============================= END OF MAIN DIJKSTRA LOOP ==========================
         
         this.cpu_time = System.nanoTime() - start_cpu_time;
         
