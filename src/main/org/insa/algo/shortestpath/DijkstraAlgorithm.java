@@ -223,36 +223,4 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     public int getBHMaxSize() {
     	return this.bh_max_size;
     }
-    
-//    public void writeData(float cost) throws IOException {
-//    	
-//    	String data_to_write;
-//    	
-//    	if (this.hasASolution == true) {
-//    	
-//	    	data_to_write = this.getInputData().getOrigin().getId() + " " +
-//	    			this.getInputData().getDestination().getId() + " " +
-//	    			Float.toString(cost) + " " +
-//	    			this.cpu_time + " " +
-//	    			this.explored_nb + " " +
-//	    			this.marked_nb;
-//    	} else {
-//    		// There is no solution, we still write something 
-//    		data_to_write = "N N N N N N";
-//    	}
-//
-//    	try {
-//    		
-//    		FileWriter fw = new FileWriter(this.dataFilePath, true);
-//    		fw.write(data_to_write);
-//    		fw.write(System.lineSeparator());
-//    		fw.flush();
-//    		fw.close();
-//    	}
-//    	catch (NoSuchFileException e) {
-//    		System.out.println(e);
-//    	}
-//    	
-//
-//    }
 }
