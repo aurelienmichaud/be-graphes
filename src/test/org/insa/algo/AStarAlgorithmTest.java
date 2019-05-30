@@ -30,6 +30,9 @@ import org.insa.algo.CreateTestFile;
 import org.insa.algo.ReadTestFile;
 
 public class AStarAlgorithmTest {
+	// Path to map directory
+	// private String pathToMap = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/";
+	private String pathToMap = "C:\\Users\\Alex\\Desktop\\map_be_graphe\\";
 
 	private static Graph nullGraph, emptyGraph, singleNodeGraph, startEqualsEndGraph;
 	
@@ -152,7 +155,7 @@ public class AStarAlgorithmTest {
 	@Test
 	public void testRandomCarreMapA0() throws IOException {
 		// Fetch the map
-		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre.mapgr";
+		String mapName = this.pathToMap + "carre.mapgr";
 	
 		GraphReader reader = new BinaryGraphReader(
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
@@ -199,7 +202,7 @@ public class AStarAlgorithmTest {
 	@Test
 	public void testRandomCarreMapA2() throws IOException {
 		// Fetch the map
-		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre.mapgr";
+		String mapName = this.pathToMap + "carre.mapgr";
 	
 		GraphReader reader = new BinaryGraphReader(
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
@@ -246,7 +249,7 @@ public class AStarAlgorithmTest {
 	@Test
 	public void testRandomInsaMapA0() throws IOException {
 		// Fetch the map
-		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/insa.mapgr";
+		String mapName = this.pathToMap + "insa.mapgr";
 	
 		GraphReader reader = new BinaryGraphReader(
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
@@ -301,7 +304,7 @@ public class AStarAlgorithmTest {
 	@Test
 	public void testRandomInsaMapA2() throws IOException {
 		// Fetch the map
-		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/insa.mapgr";
+		String mapName = this.pathToMap + "insa.mapgr";
 	
 		GraphReader reader = new BinaryGraphReader(
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
@@ -356,7 +359,7 @@ public class AStarAlgorithmTest {
 	@Test
 	public void testRandomToulouseMapA0() throws IOException {
 		// Fetch the map
-		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/toulouse.mapgr";
+		String mapName = this.pathToMap + "toulouse.mapgr";
 	
 		GraphReader reader = new BinaryGraphReader(
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
@@ -411,7 +414,7 @@ public class AStarAlgorithmTest {
 	@Test
 	public void testRandomToulouseMapA2() throws IOException {
 		// Fetch the map
-		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/toulouse.mapgr";
+		String mapName = this.pathToMap + "toulouse.mapgr";
 	
 		GraphReader reader = new BinaryGraphReader(
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
@@ -466,7 +469,7 @@ public class AStarAlgorithmTest {
 	@Test
 	public void testRandomCarreDenseMapA0() throws IOException {
 		// Fetch the map
-		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre-dense.mapgr";
+		String mapName = this.pathToMap + "carre-dense.mapgr";
 	
 		GraphReader reader = new BinaryGraphReader(
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
@@ -521,7 +524,7 @@ public class AStarAlgorithmTest {
 	@Test
 	public void testRandomCarreDenseMapA2() throws IOException {
 		// Fetch the map
-		String mapName = "/home/commetud/3eme Annee MIC/Graphes-et-Algorithmes/Maps/carre-dense.mapgr";
+		String mapName = this.pathToMap + "carre-dense.mapgr";
 	
 		GraphReader reader = new BinaryGraphReader(
 				new DataInputStream(new BufferedInputStream(new FileInputStream(mapName))));
