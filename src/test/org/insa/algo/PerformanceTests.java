@@ -22,7 +22,10 @@ public class PerformanceTests {
 	
 	@Test
 	public void testAStar() throws IOException {
+		// Create test configuration file
 		CreateTestFile.createTestFile(this.pathToResults + "carre-dense_distance_100_data.txt", this.pathToMap + "carre-dense.mapgr", "carre-dense", 100, Mode.LENGTH);
+		// Operates the tests reading the configuration file 
+		// and write the results in a different file
 		ReadTestFile.readTestFile(this.pathToResults, "carre-dense_distance_100_data.txt", this.pathToMap + "carre-dense.mapgr");
 	}
 }

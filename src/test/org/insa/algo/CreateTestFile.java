@@ -31,6 +31,7 @@ public class CreateTestFile<E> {
 		int r1 = 0;
 		int r2 = r1;
 				
+		// Write everything in a results file
 		try (Writer w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file_path), "utf-8"))) {
 			
 			w.write(map_name);

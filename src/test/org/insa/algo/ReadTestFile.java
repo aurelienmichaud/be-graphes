@@ -45,6 +45,7 @@ public class ReadTestFile {
 		int r1;
 		int r2;
 				
+		// Read from the test configuration file
 		try (BufferedReader br = new BufferedReader(new FileReader(path_rw + file_name))) {
 			
 			String l = br.readLine();
@@ -74,6 +75,7 @@ public class ReadTestFile {
 	    		pathAStar = path_rw + map_name + "_" + "temps_" + test_nb + "_" + "astar" + ".txt";
 	    	}
 			
+			// We start to write the map name and the mode in the result file
 			try (Writer w = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pathDijkstra), "utf-8"))) {
 			
 				w.write(map_name);
@@ -113,6 +115,8 @@ public class ReadTestFile {
 			AI0 = ArcInspectorFactory.getAllFilters().get(0); // All roads, shortest path
 			AI2 = ArcInspectorFactory.getAllFilters().get(3); // Only car roads, fastest path
 
+			// Main loop which reads the configuration file and operates
+			// the tests launching Dijkstra and AStar
 			while(l != null) {
 				
 				node_ids = l.split("\\s+");
@@ -129,9 +133,11 @@ public class ReadTestFile {
 					a = new AStarAlgorithm(new ShortestPathData(g, g.get(r1), g.get(r2), AI2));
 				}
 				
+				// Launch the algorithms
 				d.doRun();
 				a.doRun();
 				
+				// Fetch the data and write them in results file
 				WriteAlgoData.writeAlgoData(pathDijkstra,
 						g.get(r1).getId(),
 						g.get(r2).getId(),
